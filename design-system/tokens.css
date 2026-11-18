@@ -1,0 +1,92 @@
+/* =====================================================================
+   noho.ink — extracted design tokens
+   Source: https://noho.ink  (Webflow build, Switzer + GSAP/Lenis)
+   Extracted 2026-11-18. Values are faithful to the live site.
+   ===================================================================== */
+
+:root {
+  /* ---- Color: surfaces (warm paper neutrals) ---- */
+  --bg-page:            #F1EEE9; /* hacienda white  — page background   */
+  --bg-element:         #E7E2DA; /* toque white     — cards / tiles     */
+  --bg-element-hover:   #CDC0B0; /* sandbar         — hover / pressed    */
+  --bg-element-second:  #D7D1C7; /* offbeat         — alt surface        */
+  --bg-element-third:   #CDC0B0; /* sandbar         — deepest surface     */
+  --bg-header:          #FFFFFF;
+  --bg-form-element:    #FFFFFF;
+  --surface-white:      #FFFFFF;
+
+  /* ---- Color: ink / text ---- */
+  --txt-main:           #3C3C3C; /* raven black — primary text + dark UI */
+  --txt-main-60:        rgba(60, 60, 60, 0.6);
+  --txt-main-40:        rgba(60, 60, 60, 0.4);
+  --dim-gray:           #686868;
+  --black:              #000000;
+  --white:              #FFFFFF;
+
+  /* ---- Color: buttons ---- */
+  --bg-btn-primary:     #3C3C3C;  --txt-btn-primary:   #FFFFFF;
+  --bg-btn-secondary:   #FFFFFF;  --txt-btn-secondary: #3C3C3C;
+  --bg-btn-big:         #3C3C3C;  --txt-btn-big:       #FFFFFF;
+
+  /* ---- Color: controls / toggles ---- */
+  --bg-switch:          #D7D1C7;
+  --bg-switch-active:   #3C3C3C;
+  --bg-inner-switch:    #FFFFFF;
+  --icon-contrast:      #3C3C3C;
+
+  /* ---- Color: status indicators ---- */
+  --indicator-green:    #88C159;
+  --indicator-red:      #DC5B5B;
+
+  /* ---- Editorial accent palette (observed in product photography,
+          use for playful color blocks / imagery backdrops) ---- */
+  --accent-coral:       #D9654E; /* terracotta red   */
+  --accent-mustard:     #E9C84B; /* chair yellow     */
+  --accent-lavender:    #B9A7E6; /* soft purple      */
+  --accent-olive:       #7C8A4E; /* muted green      */
+  --accent-poppy:       #D83A2E; /* bright red       */
+
+  /* ---- Typography ---- */
+  --font-sans: "Switzer", "Switzer Variable", Arial, system-ui, sans-serif;
+  --fw-regular: 400;
+  --fw-semibold: 600;   /* all headings & emphasis */
+
+  /* Fluid scale — the live site is em/viewport driven (base ≈ 1vw at
+     desktop). These clamp() values reproduce that feel responsively.
+     Ratios below the raw site: lh ~1.0, tracking tightens as size grows. */
+  --fs-display: clamp(2.5rem, 4.2vw + 0.5rem, 4.5rem); /* hero title-line */
+  --fs-h1:      clamp(1.75rem, 2.1vw + 0.5rem, 2.5rem);
+  --fs-h2:      clamp(2rem, 4.2vw, 2.75rem);
+  --fs-h3:      clamp(1.25rem, 2.1vw, 1.5rem);
+  --fs-h4:      clamp(1rem, 1.3vw, 1.125rem);
+  --fs-body:    clamp(0.9rem, 0.95vw + 0.4rem, 1rem);
+  --fs-small:   0.8125rem;
+
+  --lh-tight:   1.0;   /* headings sit on a 1.0 line-height */
+  --lh-body:    1.45;
+
+  --ls-display: -0.04em;  /* big headings: tight tracking */
+  --ls-heading: -0.03em;
+  --ls-h4:      -0.01em;
+  --ls-body:     0em;
+
+  /* ---- Radius ---- */
+  --radius-pill:   999px;  /* buttons, switches, tags            */
+  --radius-card:   1.25rem;/* ~21px — image tiles & cards        */
+  --radius-md:     1rem;   /* 16px                               */
+
+  /* ---- Spacing scale (rem) ---- */
+  --space-1: 0.5rem;   /*  8 */
+  --space-2: 0.8rem;   /* 12.8 — a recurring site gap */
+  --space-3: 1.25rem;  /* 20 */
+  --space-4: 2rem;     /* 32  — common section/grid gap */
+  --space-5: 2.75rem;  /* 44 */
+  --space-6: 4rem;     /* 64 */
+
+  /* ---- Motion ---- */
+  --ease-out:   cubic-bezier(0.22, 1, 0.36, 1);   /* GSAP power3.out-ish */
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast:   0.25s;   /* opacity fades (site uses 0.25s / 0.32s) */
+  --dur-menu:   0.32s;   /* nav overlay: opacity+visibility+bg      */
+  --dur-reveal: 0.9s;    /* scroll/line reveals (GSAP)              */
+}

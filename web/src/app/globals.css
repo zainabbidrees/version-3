@@ -1,0 +1,239 @@
+@import "tailwindcss";
+
+/* =====================================================================
+   Variation 3 — tokens (from design-system/tokens.css + design.md)
+   No purple / orange / green anywhere.
+   ===================================================================== */
+
+:root {
+  /* surfaces (warm paper neutrals) */
+  --bg-page: #f1eee9;
+  --bg-element: #e7e2da;
+  --bg-element-2: #d7d1c7;
+  --bg-element-3: #cdc0b0;
+  --surface-white: #ffffff;
+
+  /* ink */
+  --ink: #3c3c3c;
+  --ink-60: rgba(60, 60, 60, 0.6);
+  --ink-40: rgba(60, 60, 60, 0.4);
+
+  /* compliant accents (red / blue / pink / true yellow) */
+  --poppy: #d83a2e;
+  --berry: #b02e4a;
+  --rose: #e6808c;
+  --cobalt: #2f4bda;
+  --sky: #8fb4d9;
+  --butter: #ebd873;
+}
+
+@theme inline {
+  --color-page: var(--bg-page);
+  --color-element: var(--bg-element);
+  --color-element-2: var(--bg-element-2);
+  --color-element-3: var(--bg-element-3);
+  --color-surface: var(--surface-white);
+
+  --color-ink: var(--ink);
+  --color-ink-60: var(--ink-60);
+  --color-ink-40: var(--ink-40);
+
+  --color-poppy: var(--poppy);
+  --color-berry: var(--berry);
+  --color-rose: var(--rose);
+  --color-cobalt: var(--cobalt);
+  --color-sky: var(--sky);
+  --color-butter: var(--butter);
+
+  --font-sans: "Switzer", Arial, system-ui, sans-serif;
+
+  /* fluid type scale */
+  --text-display: clamp(2.5rem, 4.2vw + 0.5rem, 4.5rem);
+  --text-h2: clamp(2rem, 4.2vw, 2.75rem);
+  --text-h3: clamp(1.25rem, 2.1vw, 1.5rem);
+  --text-h4: clamp(1rem, 1.3vw, 1.125rem);
+  --text-body: clamp(0.9rem, 0.95vw + 0.4rem, 1rem);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg-page);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* noho heading signature: semibold, tight leading, tight tracking */
+.h-display {
+  font-weight: 600;
+  font-size: var(--text-display);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+.h2 {
+  font-weight: 600;
+  font-size: var(--text-h2);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+.h3 {
+  font-weight: 600;
+  font-size: var(--text-h3);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+/* =====================================================================
+   Rotating headline — per-letter reveal (noho footer-slogan style)
+   Letters drop in from the top, staggered; cycle between phrases.
+   ===================================================================== */
+.rot {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.rot-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  line-height: 1;
+  /* breathing room so ascenders/descenders aren't clipped by the reveal mask;
+     negated by the margin so line rhythm is unchanged */
+  padding-block: 0.2em;
+  margin-block: -0.2em;
+}
+.rot-glyph {
+  display: inline-block;
+  will-change: transform;
+}
+.rot-in .rot-glyph {
+  animation: letterIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.rot-out .rot-glyph {
+  animation: letterOut 0.5s cubic-bezier(0.55, 0, 0.45, 1) both;
+}
+@keyframes letterIn {
+  from {
+    transform: translateY(-115%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes letterOut {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(115%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rot-glyph {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* same letter-drop reveal as the hero, triggered on scroll-in, for a static
+   (wrapping) heading — words kept intact so line breaks are preserved */
+.reveal-word {
+  display: inline-block;
+  white-space: nowrap; /* keep a word's letters together; wrap only at spaces */
+}
+.reveal-words .rot-glyph {
+  transform: translateY(-120%);
+}
+.reveal-words.rv-on .rot-glyph {
+  animation: letterIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal-words .rot-glyph {
+    transform: none;
+  }
+  .reveal-words.rv-on .rot-glyph {
+    animation: none;
+  }
+}
+
+/* =====================================================================
+   Fulfillment stories — stacked deck reveal
+   ===================================================================== */
+.reveal-up {
+  opacity: 0;
+  transform: translateY(26px);
+}
+.reveal-up.is-in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.35s ease,
+    color 0.35s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* closing CTA — gentle float + glow on the delivered-package graphic */
+@keyframes cta-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+@keyframes cta-glow {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+.cta-float {
+  animation: cta-float 5s ease-in-out infinite;
+}
+.cta-glow {
+  animation: cta-glow 4.2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cta-float,
+  .cta-glow {
+    animation: none;
+  }
+}
+
+/* =====================================================================
+   Order-support band — coordinated hover. Both cards rest on a light
+   tone; hovering one darkens it while the sibling lifts lighter.
+   The transition is spelled out (incl. opacity/transform) so it wins
+   over .reveal-up.is-in and the reveal animation still plays.
+   ===================================================================== */
+.order-band article.reveal-up {
+  background: var(--bg-element);
+  transition:
+    background-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.order-band:has(article:hover) article:not(:hover) {
+  background: var(--surface-white);
+}
+.order-band article:hover {
+  background: var(--bg-element-2);
+}
+/* rebuild nudge */
