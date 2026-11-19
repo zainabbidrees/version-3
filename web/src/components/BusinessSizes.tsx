@@ -63,12 +63,31 @@ export function BusinessSizes() {
   const [open, setOpen] = useState(0); // -1 = all collapsed
   const [imgIdx, setImgIdx] = useState(0); // persists last-opened for the image
   const revealRef = useRef<HTMLDivElement>(null);
+  const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const toggle = (i: number) =>
-    setOpen((cur) => {
-      if (cur !== i) setImgIdx(i);
-      return cur === i ? -1 : i;
-    });
+  const select = (i: number) => {
+    setOpen(i);
+    setImgIdx(i);
+  };
+
+  // hover-intent: a row only opens once the cursor rests on it, so passing
+  // the mouse across the list doesn't make the section jump around.
+  const scheduleSelect = (i: number) => {
+    if (hoverTimer.current) clearTimeout(hoverTimer.current);
+    hoverTimer.current = setTimeout(() => select(i), 200);
+  };
+  const cancelSchedule = () => {
+    if (hoverTimer.current) {
+      clearTimeout(hoverTimer.current);
+      hoverTimer.current = null;
+    }
+  };
+  useEffect(
+    () => () => {
+      if (hoverTimer.current) clearTimeout(hoverTimer.current);
+    },
+    [],
+  );
 
   /* fade the block in on scroll-in (matches Stories / .reveal-up) */
   useEffect(() => {
@@ -93,8 +112,8 @@ export function BusinessSizes() {
 
   return (
     <section className="relative py-14 md:py-20">
-      <div className="mx-auto max-w-[1600px] px-6 md:px-10">
-        {/* header — left-aligned to the content grid, matching other sections */}
+      <div className="mx-auto max-w-[1840px] px-6 md:px-10 lg:px-14">
+        {/* header */}
         <div ref={revealRef} className="reveal-up">
           <h2 className="h-display text-ink">
             <span className="block">Built for Businesses</span>
@@ -132,23 +151,60 @@ export function BusinessSizes() {
             {SEGMENTS.map((s, i) => {
               const isOpen = i === open;
               return (
-                <div key={s.img} className="overflow-hidden bg-element">
+                <div
+                  key={s.img}
+                  onMouseEnter={() => scheduleSelect(i)}
+                  onMouseLeave={cancelSchedule}
+                  className="relative overflow-hidden"
+                  style={{ boxShadow: "inset 0 0 0 1px rgba(0,29,63,0.10)" }}
+                >
+                  {/* navy fill crossfades in — navy and lime arrive together, so
+                      no lime-on-white flash as a row opens or closes */}
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 z-0"
+                    style={{
+                      background: "var(--navy)",
+                      opacity: isOpen ? 1 : 0,
+                      transition: "opacity 0.35s ease",
+                    }}
+                  />
+
                   <button
                     type="button"
-                    onClick={() => toggle(i)}
+                    onClick={() => {
+                      cancelSchedule();
+                      select(i);
+                    }}
+                    onFocus={() => {
+                      cancelSchedule();
+                      select(i);
+                    }}
                     aria-expanded={isOpen}
-                    className="flex w-full items-center gap-5 p-4 text-left sm:gap-6 sm:p-5"
+                    className="relative z-10 flex w-full items-center gap-5 p-4 text-left sm:gap-6 sm:p-5"
                   >
-                    <span className="shrink-0 text-[0.82rem] font-medium tabular-nums text-ink-40">
+                    <span
+                      className="shrink-0 text-[0.82rem] font-medium tabular-nums transition-colors duration-300"
+                      style={{ color: isOpen ? "rgba(222,226,30,0.72)" : "var(--ink-40)" }}
+                    >
                       {s.num}
                     </span>
 
-                    <span className="flex-1 text-[clamp(1.05rem,0.85rem+0.7vw,1.375rem)] font-semibold tracking-[-0.02em] text-ink">
+                    <span
+                      className="flex-1 text-[clamp(1.05rem,0.85rem+0.7vw,1.375rem)] font-semibold tracking-[-0.02em] transition-colors duration-300"
+                      style={{ color: isOpen ? "var(--lime)" : "var(--ink)" }}
+                    >
                       {s.label}
                     </span>
 
-                    {/* white square button — "+" rotates to "×" when open */}
-                    <span className="flex h-12 w-12 shrink-0 items-center justify-center bg-surface text-ink transition-transform duration-200 active:scale-95 sm:h-14 sm:w-14">
+                    {/* square button — "+" rotates to "×" when the row is active */}
+                    <span
+                      className="flex h-12 w-12 shrink-0 items-center justify-center transition-[background-color,color] duration-300 active:scale-95 sm:h-14 sm:w-14"
+                      style={{
+                        background: isOpen ? "var(--lime)" : "var(--navy)",
+                        color: isOpen ? "var(--navy)" : "#ffffff",
+                      }}
+                    >
                       <svg
                         width="18"
                         height="18"
@@ -173,11 +229,14 @@ export function BusinessSizes() {
 
                   {/* answer — expands inline (grid-rows 0fr→1fr) */}
                   <div
-                    className="grid transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                    className="relative z-10 grid transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
                     style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
                   >
                     <div className="overflow-hidden">
-                      <p className="max-w-[52ch] px-4 pb-6 pl-[3.1rem] text-[0.97rem] leading-relaxed text-ink-60 sm:px-5 sm:pl-[3.4rem]">
+                      <p
+                        className="max-w-[52ch] px-4 pb-6 pl-[3.1rem] text-[0.97rem] leading-relaxed transition-colors duration-300 sm:px-5 sm:pl-[3.4rem]"
+                        style={{ color: isOpen ? "rgba(222,226,30,0.85)" : "var(--ink-60)" }}
+                      >
                         {s.body}
                       </p>
                     </div>

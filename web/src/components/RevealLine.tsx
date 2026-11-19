@@ -7,7 +7,10 @@ import { useEffect, useRef, useState } from "react";
    globals.css), but played once when the line scrolls into view instead of
    cycling. Letters stay masked (translated up) until `play`, so there's no
    flash before the animation. Reduced motion is handled by the global
-   .rot-glyph media query (forces the glyphs static + visible). */
+   .rot-glyph media query (forces the glyphs static + visible).
+
+   Letters are grouped per word (each word is its own inline-flex group) so
+   line wrapping only ever happens between words, never mid-word. */
 
 const STAGGER = 45; // per-letter delay (ms) — matches RotatingHeadline
 
@@ -41,21 +44,32 @@ export function RevealLine({
     return () => io.disconnect();
   }, []);
 
-  const letters = text.split("");
+  const words = text.split(" ");
+  let gi = 0; // running glyph index so the stagger is continuous across words
+
+  const glyph = (ch: string, key: string | number) => {
+    const delay = gi++ * STAGGER;
+    return (
+      <span key={key} className="rot-mask" aria-hidden="true">
+        <span
+          className="rot-glyph"
+          style={{
+            animationDelay: `${delay}ms`,
+            ...(play ? {} : { transform: "translateY(-115%)" }),
+          }}
+        >
+          {ch}
+        </span>
+      </span>
+    );
+  };
 
   return (
     <span ref={ref} aria-label={text} className={`rot ${play ? "rot-in" : ""} ${className}`}>
-      {letters.map((ch, i) => (
-        <span key={i} className="rot-mask" aria-hidden="true">
-          <span
-            className="rot-glyph"
-            style={{
-              animationDelay: `${i * STAGGER}ms`,
-              ...(play ? {} : { transform: "translateY(-115%)" }),
-            }}
-          >
-            {ch === " " ? " " : ch}
-          </span>
+      {words.map((word, wi) => (
+        <span key={wi} className="inline-flex">
+          {word.split("").map((ch, ci) => glyph(ch, ci))}
+          {wi < words.length - 1 && glyph(" ", "sp")}
         </span>
       ))}
     </span>

@@ -1,30 +1,46 @@
 @import "tailwindcss";
 
+/* Design rule: hard edges only — no corner radius anywhere, ever. */
+*,
+*::before,
+*::after {
+  border-radius: 0 !important;
+}
+
 /* =====================================================================
-   Variation 3 — tokens (from design-system/tokens.css + design.md)
-   No purple / orange / green anywhere.
+   Variation 3 — Brand Fulfillment palette (Design & Brand Guidelines,
+   March 2026). Production Ink navy + Electric Lime, with Branded Beige
+   and Speedy Slate secondaries on white. Accessible combos only:
+   navy on white/beige/slate; navy on lime; lime/white on navy.
    ===================================================================== */
 
 :root {
-  /* surfaces (warm paper neutrals) */
-  --bg-page: #f1eee9;
-  --bg-element: #e7e2da;
-  --bg-element-2: #d7d1c7;
-  --bg-element-3: #cdc0b0;
+  /* brand colors */
+  --navy: #001d3f;   /* Production Ink  */
+  --lime: #dee21e;   /* Electric Lime   */
+  --beige: #dfdac6;  /* Branded Beige   */
+  --slate: #a2c1c5;  /* Speedy Slate    */
+
+  /* surfaces */
+  --bg-page: #ffffff;
+  --bg-element: #dfdac6;     /* Branded Beige — cards/tiles */
+  --bg-element-2: #d1cab2;   /* deeper beige — hover/alt    */
+  --bg-element-3: #a2c1c5;   /* Speedy Slate — accent surface */
   --surface-white: #ffffff;
 
-  /* ink */
-  --ink: #3c3c3c;
-  --ink-60: rgba(60, 60, 60, 0.6);
-  --ink-40: rgba(60, 60, 60, 0.4);
+  /* ink = Production Ink navy */
+  --ink: #001d3f;
+  --ink-60: rgba(0, 29, 63, 0.62);
+  --ink-40: rgba(0, 29, 63, 0.42);
 
-  /* compliant accents (red / blue / pink / true yellow) */
-  --poppy: #d83a2e;
-  --berry: #b02e4a;
-  --rose: #e6808c;
-  --cobalt: #2f4bda;
-  --sky: #8fb4d9;
-  --butter: #ebd873;
+  /* legacy accent names remapped to the brand palette (so every
+     component inherits): the single pop is Electric Lime. */
+  --poppy: #dee21e;   /* pop accent → Electric Lime */
+  --berry: #001d3f;
+  --rose: #a2c1c5;
+  --cobalt: #001d3f;
+  --sky: #a2c1c5;
+  --butter: #dee21e;
 }
 
 @theme inline {
@@ -44,6 +60,12 @@
   --color-cobalt: var(--cobalt);
   --color-sky: var(--sky);
   --color-butter: var(--butter);
+
+  /* brand-named tokens */
+  --color-navy: var(--navy);
+  --color-lime: var(--lime);
+  --color-beige: var(--beige);
+  --color-slate: var(--slate);
 
   --font-sans: "Switzer", Arial, system-ui, sans-serif;
 
@@ -101,10 +123,13 @@ body {
   overflow: hidden;
   vertical-align: top;
   line-height: 1;
-  /* breathing room so ascenders/descenders aren't clipped by the reveal mask;
-     negated by the margin so line rhythm is unchanged */
-  padding-block: 0.2em;
-  margin-block: -0.2em;
+  /* Bottom-only breathing room so descenders aren't clipped; the mask top
+     clips exactly at the line so letters dropping in never bleed into the line
+     above (the multi-line heading "glitch"). Negated by margin to keep rhythm. */
+  padding-top: 0;
+  padding-bottom: 0.26em;
+  margin-top: 0;
+  margin-bottom: -0.26em;
 }
 .rot-glyph {
   display: inline-block;
@@ -218,22 +243,84 @@ body {
 }
 
 /* =====================================================================
-   Order-support band — coordinated hover. Both cards rest on a light
-   tone; hovering one darkens it while the sibling lifts lighter.
-   The transition is spelled out (incl. opacity/transform) so it wins
-   over .reveal-up.is-in and the reveal animation still plays.
+   Order-support band — white cards on a navy hairline by default; Branded
+   Beige surfaces only on hover (a prominent, sparing cream accent). The
+   transition is spelled out (incl. opacity/transform) so it wins over
+   .reveal-up.is-in and the reveal animation still plays.
    ===================================================================== */
 .order-band article.reveal-up {
-  background: var(--bg-element);
+  background: var(--surface-white);
+  box-shadow: inset 0 0 0 1px rgba(0, 29, 63, 0.1);
   transition:
     background-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1),
     opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
     transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.order-band:has(article:hover) article:not(:hover) {
-  background: var(--surface-white);
-}
 .order-band article:hover {
-  background: var(--bg-element-2);
+  background: var(--bg-element);
+  box-shadow: inset 0 0 0 1px rgba(0, 29, 63, 0.16);
 }
-/* rebuild nudge */
+
+/* =====================================================================
+   Glowing wireframe "mark" — layered blurred copies masked into a band
+   that sweeps down the shape (the source site's CTA light-streak).
+   ===================================================================== */
+.glow-mark > div {
+  position: absolute;
+  inset: 0;
+}
+.glow-mark svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.glow-base {
+  color: rgba(0, 29, 63, 0.5); /* navy structure, visible on cream */
+  opacity: 1;
+}
+.glow-sweep {
+  color: #ffffff; /* the travelling light */
+}
+.glow-sweep {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 8%,
+    #000 50%,
+    transparent 92%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 8%,
+    #000 50%,
+    transparent 92%
+  );
+  -webkit-mask-size: 100% 240%;
+  mask-size: 100% 240%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  filter: blur(calc(var(--i) * 2.6px));
+  opacity: calc(0.95 - var(--i) * 0.2);
+  animation: mark-sweep 3.6s linear infinite;
+  animation-delay: calc(var(--i) * -0.16s);
+  will-change: mask-position;
+}
+@keyframes mark-sweep {
+  from {
+    -webkit-mask-position: 0 -85%;
+    mask-position: 0 -85%;
+  }
+  to {
+    -webkit-mask-position: 0 185%;
+    mask-position: 0 185%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glow-sweep {
+    animation: none;
+    -webkit-mask-position: 0 50%;
+    mask-position: 0 50%;
+    opacity: calc(0.6 - var(--i) * 0.12);
+  }
+}

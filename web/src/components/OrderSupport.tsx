@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { RevealWords } from "@/components/RevealWords";
 
 /* "However you order, we support it." — rebuilt in the noho "A few words
@@ -17,7 +17,8 @@ type Panel = {
   body: string;
   quote: string;
   tags: string[];
-  seed: string;
+  /* a small deck: [0] is the face shown at rest; the rest fan out on hover */
+  images: string[];
   tone: string;
   toneHover: string;
 };
@@ -29,7 +30,11 @@ const PANELS: Panel[] = [
     body: "Need branded products for an event, launch, or special project? We can help you find the right products for your needs.",
     quote: "A single order for an event.",
     tags: ["Events", "Launches", "Special projects"],
-    seed: "bf-onetime-event-512",
+    images: [
+      "/images/promo/event-giveaways.webp",
+      "/images/promo/events-booth.webp",
+      "/images/promo/company-gifts.webp",
+    ],
     tone: "var(--bg-element)",
     toneHover: "var(--bg-element-2)",
   },
@@ -39,16 +44,19 @@ const PANELS: Panel[] = [
     body: "For businesses with recurring uniform and apparel needs, we provide an easy way to manage products, ordering, and fulfillment over time.",
     quote: "A program that runs all year.",
     tags: ["Uniform programs", "Easy reorders", "Ongoing fulfillment"],
-    seed: "bf-recurring-uniform-274",
+    images: [
+      "/images/promo/pair-apparel-team.webp",
+      "/images/promo/pair-company-store.webp",
+      "/images/promo/office-writing.webp",
+    ],
     tone: "var(--bg-element)",
     toneHover: "var(--bg-element-2)",
   },
 ];
 
-const imgSrc = (seed: string) => `https://picsum.photos/seed/${seed}/600/600`;
-
 export function OrderSupport() {
   const rootRef = useRef<HTMLElement>(null);
+  const [hovered, setHovered] = useState<number | null>(null);
 
   /* reveal children with .reveal-up once the section scrolls in */
   useEffect(() => {
@@ -77,7 +85,7 @@ export function OrderSupport() {
   return (
     <section ref={rootRef} className="relative py-14 md:py-20">
       {/* header — left-aligned, echoing noho's "A few words about us" */}
-      <div className="mx-auto max-w-[1600px] px-6 md:px-10">
+      <div className="mx-auto max-w-[1840px] px-6 md:px-10 lg:px-14">
         <h2
           aria-label="However you order, we support it."
           className="h-display max-w-[9em] text-ink"
@@ -95,21 +103,34 @@ export function OrderSupport() {
 
       {/* two-panel band — edges aligned with the page margin */}
       <div className="mt-14 md:mt-20">
-        <div className="order-band mx-auto grid max-w-[1600px] grid-cols-1 gap-5 px-6 md:gap-6 md:px-10 lg:grid-cols-2">
+        <div className="order-band mx-auto grid max-w-[1840px] grid-cols-1 gap-5 px-6 md:gap-6 md:px-10 lg:px-14 lg:grid-cols-2">
           {PANELS.map((p, i) => (
             <article
-              key={p.seed}
-              className="group/card reveal-up flex min-h-[26rem] flex-col p-8 sm:p-10 lg:min-h-[32rem] lg:p-14"
-              style={{ transitionDelay: `${160 + i * 120}ms` }}
+              key={p.title}
+              onMouseEnter={() => setHovered(i)}
+              onMouseLeave={() => setHovered((h) => (h === i ? null : h))}
+              className="group/card reveal-up flex min-h-[26rem] flex-col p-8 transition-colors duration-500 sm:p-10 lg:min-h-[32rem] lg:p-14"
+              style={{
+                transitionDelay: `${160 + i * 120}ms`,
+                // white by default; Branded Beige surfaces only on hover
+                background: hovered === i ? "var(--bg-element)" : "var(--surface-white)",
+                boxShadow:
+                  hovered === i
+                    ? "inset 0 0 0 1px rgba(0,29,63,0.16)"
+                    : "inset 0 0 0 1px rgba(0,29,63,0.10)",
+              }}
             >
-              {/* top: image + label (noho headshot + name row) */}
-              <div className="flex items-start gap-5">
-                <div className="relative h-20 w-20 shrink-0 overflow-hidden bg-element-3 sm:h-24 sm:w-24">
+              {/* top: image deck + label (noho headshot + name row).
+                  One still image at rest; on hover the photos cycle, each
+                  sliding up and stacking over the last. */}
+              <div className="flex items-start gap-6 sm:gap-8">
+                <div className="relative h-32 w-32 shrink-0 overflow-hidden bg-element-3 shadow-[0_10px_28px_rgba(0,29,63,0.14)] sm:h-40 sm:w-40 lg:h-44 lg:w-44">
                   <img
-                    src={imgSrc(p.seed)}
+                    src={p.images[0]}
                     alt={`${p.title} — branded apparel and products`}
                     loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/card:scale-105"
+                    draggable={false}
+                    className="h-full w-full object-cover"
                   />
                 </div>
 

@@ -37,7 +37,7 @@ export function ClosingCta() {
 
   return (
     <section ref={rootRef} className="bg-ink text-page">
-      <div className="mx-auto max-w-[1400px] px-6 py-20 text-center md:px-10 md:py-28">
+      <div className="mx-auto max-w-[1840px] px-6 py-20 text-center md:px-10 lg:px-14 md:py-28">
         <p
           className="reveal-up inline-flex items-center gap-2 text-[0.8rem] font-medium uppercase tracking-[0.18em] text-page/55"
         >
@@ -73,7 +73,7 @@ export function ClosingCta() {
         >
           <a
             href="/contact"
-            className="inline-flex items-center justify-center rounded-full bg-element-2 px-7 py-3.5 text-[0.95rem] font-medium text-ink transition-[transform,background-color] duration-200 hover:bg-element-3 active:scale-[0.98]"
+            className="inline-flex items-center justify-center rounded-full bg-[var(--lime)] px-7 py-3.5 text-[0.95rem] font-semibold text-ink transition-[transform,opacity] duration-200 hover:opacity-90 active:scale-[0.98]"
           >
             Request a Discovery Meeting
           </a>

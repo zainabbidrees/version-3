@@ -136,7 +136,7 @@ export function Stories() {
 
   return (
     <section className="relative overflow-hidden py-14 md:py-20">
-      <div className="mx-auto max-w-[1600px] px-6 md:px-10">
+      <div className="mx-auto max-w-[1840px] px-6 md:px-10 lg:px-14">
         <div ref={revealRef} className="reveal-up">
           <h2 className="h-display text-ink">Fulfillment stories</h2>
         </div>
@@ -157,10 +157,16 @@ export function Stories() {
           style={{
             gap: `${GAP}px`,
             transform: `translate3d(${tx}px, 0, 0)`,
-            transition: "transform 0.65s cubic-bezier(0.22, 1, 0.36, 1)",
+            transition: "transform 0.7s cubic-bezier(0.65, 0, 0.35, 1)",
+            willChange: "transform",
           }}
         >
-          {STORIES.map((s, i) => (
+          {STORIES.map((s, i) => {
+            // on = the focused/active card (set as you move forward/back)
+            const on = i === active;
+            const limeBody = "rgba(222,226,30,0.85)";
+            const limeMeta = "rgba(222,226,30,0.72)";
+            return (
             <a
               key={s.title}
               ref={i === 0 ? cardRef : undefined}
@@ -168,29 +174,59 @@ export function Stories() {
               style={{
                 width: CARD_W,
                 height: CARD_H,
-                background: s.tone,
-                opacity: i === active ? 1 : 0.55,
-                transition: "opacity 0.5s ease",
+                background: "var(--surface-white)",
+                boxShadow: on ? "none" : "inset 0 0 0 1px rgba(0,29,63,0.1)",
+                opacity: on ? 1 : 0.8,
+                transition:
+                  "box-shadow 0.7s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.7s cubic-bezier(0.65, 0, 0.35, 1)",
               }}
               className="relative flex shrink-0 flex-col overflow-hidden p-8 text-left sm:p-10 lg:p-12"
             >
-              <span className="absolute right-8 top-8 h-2.5 w-2.5 rounded-full bg-ink sm:right-10 sm:top-10 lg:right-12 lg:top-12" />
+              {/* noho-style fill: a navy panel that wipes up from the bottom
+                  when the card becomes the focused one (moving forward/back) */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute inset-0 z-0"
+                style={{
+                  background: "var(--navy)",
+                  transform: on ? "translateY(0%)" : "translateY(100%)",
+                  transition: "transform 0.7s cubic-bezier(0.65, 0, 0.35, 1)",
+                  willChange: "transform",
+                }}
+              />
 
-              <span className="text-[0.82rem] font-medium tabular-nums text-ink-40">
+              <span
+                className="absolute right-8 top-8 z-10 h-2.5 w-2.5 rounded-full sm:right-10 sm:top-10 lg:right-12 lg:top-12"
+                style={{ background: on ? "var(--lime)" : "var(--navy)" }}
+              />
+
+              <span
+                className="relative z-10 text-[0.82rem] font-medium tabular-nums text-ink-40 transition-colors duration-500"
+                style={{ color: on ? limeMeta : undefined }}
+              >
                 {s.num}
               </span>
 
-              <h3 className="mt-6 max-w-[20ch] text-[clamp(1.45rem,1rem+1.3vw,1.85rem)] font-semibold leading-[1.1] tracking-[-0.03em] text-ink">
+              <h3
+                className="relative z-10 mt-6 max-w-[20ch] text-[clamp(1.45rem,1rem+1.3vw,1.85rem)] font-semibold leading-[1.1] tracking-[-0.03em] text-ink transition-colors duration-500"
+                style={{ color: on ? "var(--lime)" : undefined }}
+              >
                 {s.title}
               </h3>
 
-              <p className="mt-4 max-w-[44ch] text-[0.97rem] leading-relaxed text-ink-60">
+              <p
+                className="relative z-10 mt-4 max-w-[44ch] text-[0.97rem] leading-relaxed text-ink-60 transition-colors duration-500"
+                style={{ color: on ? limeBody : undefined }}
+              >
                 {s.excerpt}
               </p>
 
               {s.cta && (
-                <div className="mt-auto pt-6 text-[0.9rem]">
-                  <span className="inline-flex items-center gap-1.5 font-medium text-ink">
+                <div className="relative z-10 mt-auto pt-6 text-[0.9rem]">
+                  <span
+                    className="inline-flex items-center gap-1.5 font-medium text-ink transition-colors duration-500"
+                    style={{ color: on ? "var(--lime)" : undefined }}
+                  >
                     {s.cta.label}
                     <svg
                       width="12"
@@ -211,12 +247,13 @@ export function Stories() {
                 </div>
               )}
             </a>
-          ))}
+            );
+          })}
         </div>
       </div>
 
       {/* controls — bottom-left, aligned to the heading */}
-      <div className="mx-auto max-w-[1600px] px-6 md:px-10">
+      <div className="mx-auto max-w-[1840px] px-6 md:px-10 lg:px-14">
         <div className="mt-10 flex items-center gap-5">
           <div className="flex items-center gap-3">
             <button
@@ -224,7 +261,7 @@ export function Stories() {
               onClick={() => go(-1)}
               disabled={atStart}
               aria-label="Previous story"
-              className="flex h-12 w-12 items-center justify-center rounded-full border border-ink/15 text-ink transition-all hover:bg-ink hover:text-white disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-ink active:scale-95"
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-ink/15 text-ink transition-all hover:border-[var(--lime)] hover:bg-[var(--lime)] hover:text-ink disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-ink/15 disabled:hover:bg-transparent disabled:hover:text-ink active:scale-95"
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                 <path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -235,7 +272,7 @@ export function Stories() {
               onClick={() => go(1)}
               disabled={atEnd}
               aria-label="Next story"
-              className="flex h-12 w-12 items-center justify-center rounded-full border border-ink/15 text-ink transition-all hover:bg-ink hover:text-white disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-ink active:scale-95"
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-ink/15 text-ink transition-all hover:border-[var(--lime)] hover:bg-[var(--lime)] hover:text-ink disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-ink/15 disabled:hover:bg-transparent disabled:hover:text-ink active:scale-95"
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                 <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

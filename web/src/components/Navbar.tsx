@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { Logo } from "@/components/Logo";
 
 const services = [
   { label: "Apparel & Uniforms", href: "/apparel-uniforms" },
@@ -18,24 +20,27 @@ const links = [
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isActive = (href: string) => pathname === href;
+  const isServicesActive = services.some((s) => pathname === s.href);
+  // dark-navbar link: lime + bold when it's the current page
+  const linkCls = (active: boolean) =>
+    `text-[0.95rem] transition-colors ${
+      active ? "font-semibold text-[var(--lime)]" : "text-white/75 hover:text-white"
+    }`;
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50">
-      <nav className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4 md:px-10 md:py-5">
-        {/* Wordmark */}
-        <a
-          href="/"
-          className="text-[1.05rem] font-semibold tracking-[-0.03em] text-ink"
-        >
-          Brand Fulfillment
+    <header className="fixed inset-x-0 top-0 z-50 bg-ink/95 backdrop-blur-sm border-b border-white/10">
+      <nav className="mx-auto flex max-w-[1840px] items-center justify-between px-6 py-3 md:px-10 lg:px-14 md:py-3.5">
+        {/* Logo lockup */}
+        <a href="/" aria-label="Brand Fulfillment home" className="text-[0.95rem] text-white">
+          <Logo tone="white" height={38} />
         </a>
 
         {/* Desktop links */}
         <div className="hidden items-center gap-7 md:flex">
-          <a
-            href="/"
-            className="text-[0.95rem] text-ink/80 transition-colors hover:text-ink"
-          >
+          <a href="/" className={linkCls(isActive("/"))}>
             Home
           </a>
 
@@ -45,7 +50,7 @@ export function Navbar() {
             onMouseEnter={() => setServicesOpen(true)}
             onMouseLeave={() => setServicesOpen(false)}
           >
-            <button className="text-[0.95rem] text-ink/80 transition-colors hover:text-ink">
+            <button className={linkCls(isServicesActive)}>
               Services
             </button>
             {servicesOpen && (
@@ -55,7 +60,12 @@ export function Navbar() {
                     <a
                       key={s.href}
                       href={s.href}
-                      className="block rounded-xl px-4 py-2.5 text-[0.9rem] text-ink/80 transition-colors hover:bg-element hover:text-ink"
+                      aria-current={isActive(s.href) ? "page" : undefined}
+                      className={`block rounded-xl px-4 py-2.5 text-[0.9rem] transition-colors ${
+                        isActive(s.href)
+                          ? "bg-lime/25 font-semibold text-ink"
+                          : "text-ink/80 hover:bg-lime/25 hover:text-ink"
+                      }`}
                     >
                       {s.label}
                     </a>
@@ -69,36 +79,37 @@ export function Navbar() {
             <a
               key={l.href}
               href={l.href}
-              className="text-[0.95rem] text-ink/80 transition-colors hover:text-ink"
+              aria-current={isActive(l.href) ? "page" : undefined}
+              className={linkCls(isActive(l.href))}
             >
               {l.label}
             </a>
           ))}
 
-          {/* Primary CTA — noho ink pill */}
+          {/* Primary CTA — Electric Lime pill, navy text */}
           <a
             href="/contact"
-            className="rounded-full bg-ink px-5 py-2.5 text-[0.9rem] font-medium text-white transition-opacity hover:opacity-90"
+            className="rounded-full bg-[var(--lime)] px-5 py-2.5 text-[0.9rem] font-semibold text-ink transition-opacity hover:opacity-90"
           >
             Request a Discovery Meeting
           </a>
         </div>
 
-        {/* Mobile menu button — noho white rounded square */}
+        {/* Mobile menu button */}
         <button
           aria-label="Menu"
           onClick={() => setOpen((v) => !v)}
-          className="flex h-11 w-11 items-center justify-center rounded-xl bg-surface md:hidden"
+          className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 md:hidden"
         >
           <span className="relative block h-[14px] w-[18px]">
             <span
-              className={`absolute left-0 h-[2px] w-full bg-ink transition-transform ${open ? "top-[6px] rotate-45" : "top-0"}`}
+              className={`absolute left-0 h-[2px] w-full bg-white transition-transform ${open ? "top-[6px] rotate-45" : "top-0"}`}
             />
             <span
-              className={`absolute left-0 top-[6px] h-[2px] w-full bg-ink transition-opacity ${open ? "opacity-0" : "opacity-100"}`}
+              className={`absolute left-0 top-[6px] h-[2px] w-full bg-white transition-opacity ${open ? "opacity-0" : "opacity-100"}`}
             />
             <span
-              className={`absolute left-0 h-[2px] w-full bg-ink transition-transform ${open ? "top-[6px] -rotate-45" : "top-[12px]"}`}
+              className={`absolute left-0 h-[2px] w-full bg-white transition-transform ${open ? "top-[6px] -rotate-45" : "top-[12px]"}`}
             />
           </span>
         </button>
@@ -113,7 +124,12 @@ export function Navbar() {
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="rounded-xl px-3 py-3 text-[1rem] text-ink/85 hover:bg-element"
+                aria-current={isActive(l.href) ? "page" : undefined}
+                className={`rounded-xl px-3 py-3 text-[1rem] ${
+                  isActive(l.href)
+                    ? "bg-lime/25 font-semibold text-ink"
+                    : "text-ink/85 hover:bg-lime/25"
+                }`}
               >
                 {l.label}
               </a>
@@ -127,7 +143,12 @@ export function Navbar() {
                   key={s.href}
                   href={s.href}
                   onClick={() => setOpen(false)}
-                  className="rounded-xl px-3 py-3 text-[1rem] text-ink/85 hover:bg-element"
+                  aria-current={isActive(s.href) ? "page" : undefined}
+                  className={`rounded-xl px-3 py-3 text-[1rem] ${
+                    isActive(s.href)
+                      ? "bg-lime/25 font-semibold text-ink"
+                      : "text-ink/85 hover:bg-lime/25"
+                  }`}
                 >
                   {s.label}
                 </a>
@@ -136,7 +157,7 @@ export function Navbar() {
             <a
               href="/contact"
               onClick={() => setOpen(false)}
-              className="mt-2 rounded-full bg-ink px-5 py-3 text-center text-[0.95rem] font-medium text-white"
+              className="mt-2 rounded-full bg-[var(--lime)] px-5 py-3 text-center text-[0.95rem] font-semibold text-ink"
             >
               Request a Discovery Meeting
             </a>

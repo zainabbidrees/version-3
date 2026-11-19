@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { RevealWords } from "@/components/RevealWords";
+import { Logo } from "@/components/Logo";
 
 /* Site footer — Brand Fulfillment content, rebuilt in noho's dark-ink,
    big-type style. Keeps the source site's signature micro-interaction: the
@@ -108,7 +109,7 @@ export function Footer() {
       ref={rootRef}
       className="relative overflow-hidden bg-ink pt-16 text-page md:pt-20 lg:fixed lg:inset-x-0 lg:bottom-0 lg:z-0 lg:flex lg:min-h-[100dvh] lg:flex-col lg:justify-between lg:pt-28"
     >
-      <div className="mx-auto w-full max-w-[1600px] px-6 md:px-10">
+      <div className="mx-auto w-full max-w-[1840px] px-6 md:px-10 lg:px-14">
         {/* quick actions — the arrow-swap row */}
         <ul className="reveal-up grid grid-cols-1 divide-y divide-page/15 border-y border-page/15 md:grid-cols-4 md:divide-x md:divide-y-0">
           {ACTIONS.map((a, i) => (
@@ -164,10 +165,10 @@ export function Footer() {
         {/* bottom lockup */}
         <div className="reveal-up flex flex-col gap-6 border-t border-page/15 py-10 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="text-[1.15rem] font-semibold tracking-[-0.02em] text-page">
-              Brand Fulfillment
-            </p>
-            <p className="mt-1.5 text-[0.9rem] text-page/55">Where Brands Get Delivered</p>
+            <span className="text-[1.1rem] text-page">
+              <Logo tone="white" height={46} />
+            </span>
+            <p className="mt-2.5 text-[0.9rem] text-page/55">Where Brands Get Delivered</p>
           </div>
           <small className="text-[0.82rem] text-page/45">
             © 2026 Brand Fulfillment. All rights reserved.
@@ -176,7 +177,7 @@ export function Footer() {
       </div>
 
       {/* oversized wordmark — stretched full width, quiet paper watermark */}
-      <div className="mx-auto mt-16 w-full max-w-[1600px] px-6 pb-10 md:px-10 md:pb-14 lg:mt-auto">
+      <div className="mx-auto mt-16 w-full max-w-[1840px] px-6 pb-10 md:px-10 lg:px-14 md:pb-14 lg:mt-auto">
         <div
           role="img"
           aria-label="Brand Fulfillment"
@@ -191,7 +192,7 @@ export function Footer() {
               fontWeight: 600,
               letterSpacing: "-0.02em",
               lineHeight: 1,
-              color: "rgba(241, 238, 233, 0.14)",
+              color: "rgba(222, 226, 30, 0.13)",
             }}
           />
         </div>
