@@ -36,7 +36,7 @@ export function RotatingHeadline() {
     <span
       key={index}
       aria-label={phrase}
-      className={`rot ${leaving ? "rot-out" : "rot-in"} text-poppy`}
+      className={`rot ${leaving ? "rot-out" : "rot-in"} text-[#2e9e5b]`}
     >
       {letters.map((ch, i) => (
         <span key={i} className="rot-mask" aria-hidden="true">
